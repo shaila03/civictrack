@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CivicTrack — Redefining Municipal Governance</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-deep: #0A0F1E;
+  --bg-dark: #0D1B2A;
+  --bg-card: #0F1E30;
+  --bg-card2: #111d2e;
+  --teal: #0B3954;
+  --cyan: #00D4FF;
+  --cyan-dim: rgba(0,212,255,0.15);
+  --cyan-glow: rgba(0,212,255,0.4);
+  --gold: #FFD166;
+  --gold-dim: rgba(255,209,102,0.15);
+  --white: #F0F4FF;
+  --grey: #8A9BB5;
+  --border: rgba(0,212,255,0.18);
+  --font-head: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-deep);
+  color: var(--white);
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Grain overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.4;
+}
+
+/* ===== NAVBAR ===== */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  padding: 1.2rem 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.4s ease;
+}
+nav.scrolled {
+  background: rgba(10,15,30,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 0.9rem 4rem;
+}
+.nav-logo {
+  font-family: var(--font-head);
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: -0.5px;
+}
+.nav-logo span { color: var(--cyan); }
+.nav-links { display: flex; gap: 2.5rem; list-style: none; }
+.nav-links a {
+  color: var(--grey);
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  transition: color 0.3s;
+}
+.nav-links a:hover { color: var(--cyan); }
+.nav-cta {
+  background: var(--cyan);
+  color: var(--bg-deep);
+  padding: 0.55rem 1.4rem;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-decoration: none;
+  transition: all 0.3s;
+  box-shadow: 0 0 20px var(--cyan-glow);
+}
+.nav-cta:hover { background: #33deff; box-shadow: 0 0 30px var(--cyan-glow); }
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+}
+.hamburger span {
+  display: block; width: 24px; height: 2px;
+  background: var(--white); border-radius: 2px;
+  transition: all 0.3s;
+}
+.mobile-menu {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(10,15,30,0.97);
+  z-index: 999;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+.mobile-menu.open { display: flex; }
+.mobile-menu a {
+  font-family: var(--font-head);
+  font-size: 1.8rem;
+  color: var(--white);
+  text-decoration: none;
+  font-weight: 700;
+}
+.mobile-menu a:hover { color: var(--cyan); }
+.close-menu {
+  position: absolute; top: 2rem; right: 2rem;
+  font-size: 2rem; cursor: pointer; color: var(--grey);
+}
+
+/* ===== HERO ===== */
+#hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  padding: 6rem 2rem 4rem;
+}
+
+.hero-blobs {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.35;
+  animation: blobFloat 10s ease-in-out infinite;
+}
+.blob1 { width: 600px; height: 600px; background: radial-gradient(circle, #00D4FF, transparent); top: -200px; left: -150px; animation-delay: 0s; }
+.blob2 { width: 500px; height: 500px; background: radial-gradient(circle, #0B3954, transparent); top: 50%; right: -200px; animation-delay: -4s; }
+.blob3 { width: 400px; height: 400px; background: radial-gradient(circle, #FFD166 40%, transparent); bottom: -100px; left: 40%; animation-delay: -7s; }
+
+@keyframes blobFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -40px) scale(1.05); }
+  66% { transform: translate(-20px, 30px) scale(0.95); }
+}
+
+.hero-content { position: relative; z-index: 1; max-width: 900px; }
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--border);
+  background: var(--cyan-dim);
+  color: var(--cyan);
+  padding: 0.45rem 1.2rem;
+  border-radius: 50px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin-bottom: 2rem;
+  animation: badgePulse 3s ease-in-out infinite;
+}
+@keyframes badgePulse {
+  0%, 100% { box-shadow: 0 0 10px var(--cyan-dim); }
+  50% { box-shadow: 0 0 25px var(--cyan-glow); }
+}
+
+.hero-title {
+  font-family: var(--font-head);
+  font-size: clamp(2.4rem, 6vw, 5rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -1.5px;
+  margin-bottom: 1.5rem;
+}
+.hero-title span { color: var(--cyan); }
+
+.hero-sub {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: var(--grey);
+  max-width: 600px;
+  margin: 0 auto 2.5rem;
+  line-height: 1.7;
+  font-weight: 400;
+}
+
+.hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+.btn-primary {
+  background: var(--cyan);
+  color: var(--bg-deep);
+  padding: 0.85rem 2rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+  box-shadow: 0 0 30px var(--cyan-glow);
+  transition: all 0.3s;
+  border: none; cursor: pointer;
+}
+.btn-primary:hover { background: #33deff; transform: translateY(-2px); box-shadow: 0 0 50px var(--cyan-glow); }
+.btn-ghost {
+  border: 1px solid var(--border);
+  color: var(--white);
+  padding: 0.85rem 2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: all 0.3s;
+  background: transparent;
+  cursor: pointer;
+}
+.btn-ghost:hover { border-color: var(--cyan); color: var(--cyan); background: var(--cyan-dim); }
+
+.scroll-down {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--grey);
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  animation: scrollBounce 2s ease-in-out infinite;
+}
+.scroll-down svg { width: 20px; fill: none; stroke: var(--grey); stroke-width: 2; }
+@keyframes scrollBounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(8px); }
+}
+
+/* ===== SECTIONS COMMON ===== */
+section { padding: 6rem 2rem; }
+.container { max-width: 1200px; margin: 0 auto; }
+.section-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 1rem;
+}
+.section-title {
+  font-family: var(--font-head);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+  margin-bottom: 1.2rem;
+}
+.section-sub {
+  color: var(--grey);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  max-width: 560px;
+}
+
+/* ===== PROBLEM SECTION ===== */
+#problem { background: var(--bg-dark); }
+.problem-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+.problem-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2rem;
+  transition: all 0.4s ease;
+  opacity: 0;
+  transform: translateY(40px);
+  position: relative;
+  overflow: hidden;
+}
+.problem-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.problem-card:hover::before { opacity: 1; }
+.problem-card.visible { opacity: 1; transform: translateY(0); }
+.problem-card:hover { border-color: var(--cyan); transform: translateY(-6px); box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 30px var(--cyan-dim); }
+.problem-icon {
+  width: 52px; height: 52px;
+  background: var(--cyan-dim);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem;
+  margin-bottom: 1.2rem;
+  border: 1px solid var(--border);
+}
+.problem-card h3 { font-family: var(--font-head); font-size: 1.15rem; font-weight: 700; margin-bottom: 0.6rem; }
+.problem-card p { color: var(--grey); font-size: 0.9rem; line-height: 1.65; }
+
+/* ===== ABOUT SECTION ===== */
+#about { background: var(--bg-deep); }
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; margin-top: 1rem; }
+.about-left .big-quote {
+  font-family: var(--font-head);
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+}
+.about-left .big-quote span { color: var(--cyan); }
+.about-left p { color: var(--grey); margin-top: 1.5rem; line-height: 1.7; }
+
+.feature-list { list-style: none; margin-top: 1rem; }
+.feature-list li {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(0,212,255,0.08);
+  font-weight: 500;
+  font-size: 0.95rem;
+  opacity: 0;
+  transform: translateX(30px);
+  transition: all 0.5s ease;
+}
+.feature-list li.visible { opacity: 1; transform: translateX(0); }
+.feature-list li:last-child { border-bottom: none; }
+.feat-icon {
+  width: 36px; height: 36px;
+  background: var(--cyan-dim);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--cyan);
+  font-size: 1rem;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+}
+
+/* ===== METRICS SECTION ===== */
+#metrics {
+  background: linear-gradient(135deg, var(--teal) 0%, #081525 100%);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  text-align: center;
+}
+.metric-item { padding: 2rem 1rem; }
+.metric-number {
+  font-family: var(--font-head);
+  font-size: clamp(2.8rem, 5vw, 4rem);
+  font-weight: 800;
+  color: var(--gold);
+  line-height: 1;
+  letter-spacing: -2px;
+  text-shadow: 0 0 30px rgba(255,209,102,0.4);
+}
+.metric-label { color: var(--grey); margin-top: 0.5rem; font-size: 0.9rem; font-weight: 500; }
+
+/* ===== WORKFLOW SECTION ===== */
+#workflow { background: var(--bg-dark); overflow: hidden; }
+.workflow-steps {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+  margin-top: 3.5rem;
+  position: relative;
+}
+.workflow-steps::before {
+  content: '';
+  position: absolute;
+  top: 40px;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: repeating-linear-gradient(90deg, var(--cyan) 0, var(--cyan) 8px, transparent 8px, transparent 16px);
+  z-index: 0;
+  opacity: 0.4;
+  animation: dashMove 2s linear infinite;
+}
+@keyframes dashMove {
+  from { background-position: 0 0; }
+  to { background-position: 32px 0; }
+}
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 0.8rem;
+  position: relative;
+  z-index: 1;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.5s ease;
+}
+.step.visible { opacity: 1; transform: translateY(0); }
+.step-num {
+  width: 56px; height: 56px;
+  background: var(--bg-card);
+  border: 2px solid var(--cyan);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem;
+  margin-bottom: 1.2rem;
+  box-shadow: 0 0 20px var(--cyan-dim);
+}
+.step h4 { font-family: var(--font-head); font-size: 0.85rem; font-weight: 700; margin-bottom: 0.4rem; line-height: 1.3; }
+.step p { color: var(--grey); font-size: 0.78rem; line-height: 1.5; }
+
+/* ===== ROLES SECTION ===== */
+#roles { background: var(--bg-deep); }
+.role-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin: 3rem 0 2rem;
+  background: var(--bg-card);
+  padding: 0.4rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  max-width: 600px;
+}
+.role-tab {
+  flex: 1;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--grey);
+  transition: all 0.3s;
+  letter-spacing: 0.5px;
+}
+.role-tab.active {
+  background: var(--cyan);
+  color: var(--bg-deep);
+  box-shadow: 0 0 20px var(--cyan-glow);
+}
+.role-panel { display: none; animation: fadeIn 0.4s ease; }
+.role-panel.active { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.role-info h3 { font-family: var(--font-head); font-size: 1.8rem; font-weight: 800; margin-bottom: 0.5rem; }
+.role-icon-big { font-size: 2.5rem; margin-bottom: 1rem; }
+.role-info p { color: var(--grey); margin-bottom: 1.5rem; line-height: 1.7; }
+.role-capabilities { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; }
+.role-capabilities li {
+  display: flex; align-items: center; gap: 0.8rem;
+  font-size: 0.92rem; color: var(--white);
+}
+.role-capabilities li::before {
+  content: '✦';
+  color: var(--cyan);
+  font-size: 0.7rem;
+  flex-shrink: 0;
+}
+.role-mockup {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2rem;
+  font-size: 0.85rem;
+}
+.role-mockup-title {
+  font-family: var(--font-head);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--cyan);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid var(--border);
+}
+.mock-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  color: var(--grey);
+  font-size: 0.82rem;
+}
+.mock-badge {
+  padding: 0.2rem 0.7rem;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+.badge-green { background: rgba(0,255,136,0.15); color: #00ff88; }
+.badge-gold { background: var(--gold-dim); color: var(--gold); }
+.badge-cyan { background: var(--cyan-dim); color: var(--cyan); }
+
+/* ===== TECH STACK ===== */
+#tech { background: var(--bg-dark); }
+.tech-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 3rem;
+  justify-content: center;
+}
+.tech-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.8rem 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  background: var(--bg-card);
+  font-weight: 600;
+  font-size: 0.88rem;
+  transition: all 0.3s;
+  cursor: default;
+}
+.tech-badge:hover {
+  border-color: var(--cyan);
+  background: var(--cyan-dim);
+  color: var(--cyan);
+  box-shadow: 0 0 25px var(--cyan-dim);
+  transform: translateY(-3px);
+}
+.tech-badge span { font-size: 1.1rem; }
+
+/* ===== SDG SECTION ===== */
+#sdg { background: var(--bg-deep); }
+.sdg-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+.sdg-card {
+  background: var(--bg-card2);
+  border: 1px solid rgba(255,209,102,0.15);
+  border-left: 3px solid var(--gold);
+  border-radius: 12px;
+  padding: 1.8rem;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.5s ease;
+}
+.sdg-card.visible { opacity: 1; transform: translateY(0); }
+.sdg-card:hover { border-color: var(--gold); box-shadow: 0 10px 40px rgba(255,209,102,0.1); transform: translateY(-4px); }
+.sdg-num {
+  font-family: var(--font-head);
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 0.4rem;
+  text-shadow: 0 0 20px rgba(255,209,102,0.3);
+}
+.sdg-card h4 { font-family: var(--font-head); font-size: 1rem; font-weight: 700; margin-bottom: 0.6rem; }
+.sdg-card p { color: var(--grey); font-size: 0.88rem; line-height: 1.6; }
+
+/* ===== SOCIAL IMPACT ===== */
+#impact {
+  background: var(--bg-card2);
+  position: relative;
+  overflow: hidden;
+}
+#impact::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(0,212,255,0.03) 0,
+    rgba(0,212,255,0.03) 1px,
+    transparent 0,
+    transparent 50%
+  );
+  background-size: 30px 30px;
+}
+.impact-quote {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  max-width: 800px;
+  margin: 0 auto 4rem;
+}
+.impact-quote blockquote {
+  font-family: var(--font-head);
+  font-size: clamp(1.4rem, 3vw, 2.2rem);
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: -0.3px;
+}
+.impact-quote blockquote span { color: var(--cyan); }
+
+.impact-cols {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  position: relative;
+  z-index: 1;
+}
+.impact-col { text-align: center; padding: 2rem; }
+.impact-col-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+.impact-col h4 { font-family: var(--font-head); font-size: 1.1rem; font-weight: 700; margin-bottom: 0.6rem; }
+.impact-col p { color: var(--grey); font-size: 0.9rem; line-height: 1.6; }
+
+/* ===== FOOTER ===== */
+footer {
+  background: var(--bg-deep);
+  border-top: 1px solid transparent;
+  position: relative;
+}
+footer::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), var(--gold), var(--cyan), transparent);
+}
+.footer-main {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 3rem;
+  padding: 4rem 4rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.footer-brand .logo { font-family: var(--font-head); font-size: 1.3rem; font-weight: 800; margin-bottom: 0.8rem; }
+.footer-brand .logo span { color: var(--cyan); }
+.footer-brand p { color: var(--grey); font-size: 0.88rem; line-height: 1.6; max-width: 260px; }
+.footer-col h5 { font-family: var(--font-head); font-weight: 700; font-size: 0.85rem; letter-spacing: 1px; color: var(--white); margin-bottom: 1.2rem; }
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; }
+.footer-col ul a { color: var(--grey); text-decoration: none; font-size: 0.88rem; transition: color 0.3s; }
+.footer-col ul a:hover { color: var(--cyan); }
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 1.5rem 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.footer-tagline { font-size: 0.8rem; color: var(--grey); }
+.footer-tagline span { color: var(--cyan); }
+.social-links { display: flex; gap: 1rem; }
+.social-link {
+  width: 36px; height: 36px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--grey);
+  font-size: 0.9rem;
+  transition: all 0.3s;
+  text-decoration: none;
+  cursor: pointer;
+}
+.social-link:hover { border-color: var(--cyan); color: var(--cyan); background: var(--cyan-dim); }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+  nav { padding: 1rem 1.5rem; }
+  nav.scrolled { padding: 0.8rem 1.5rem; }
+  .nav-links, .nav-cta { display: none; }
+  .hamburger { display: flex; }
+  .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+  .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+  .workflow-steps { grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .workflow-steps::before { display: none; }
+  .role-panel.active { grid-template-columns: 1fr; }
+  .impact-cols { grid-template-columns: 1fr; }
+  .footer-main { grid-template-columns: 1fr 1fr; padding: 3rem 2rem 1.5rem; }
+  .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; padding: 1.5rem 2rem; }
+}
+@media (max-width: 600px) {
+  section { padding: 4rem 1.2rem; }
+  .metrics-grid { grid-template-columns: 1fr 1fr; }
+  .workflow-steps { grid-template-columns: 1fr; }
+  .role-tabs { flex-direction: column; }
+  .footer-main { grid-template-columns: 1fr; padding: 2.5rem 1.5rem 1.5rem; }
+  .step { padding: 0; }
+}
+
+/* ===== DOWNLOAD SECTION ===== */
+#download {
+  background: var(--bg-deep);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+#download::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(0,212,255,0.07), transparent);
+  pointer-events: none;
+}
+.download-inner {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+.download-inner .section-sub { margin: 0 auto 3rem; }
+.download-cards {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 0;
+}
+.dl-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 2rem 2.2rem;
+  width: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.35s ease;
+  text-decoration: none;
+  color: var(--white);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+.dl-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--cyan-dim), transparent);
+  opacity: 0;
+  transition: opacity 0.35s;
+}
+.dl-card:hover::before { opacity: 1; }
+.dl-card:hover {
+  border-color: var(--cyan);
+  transform: translateY(-8px);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.4), 0 0 30px var(--cyan-dim);
+}
+.dl-card.upcoming {
+  border-color: rgba(255,209,102,0.25);
+  cursor: default;
+  pointer-events: none;
+}
+.dl-card.upcoming::before {
+  background: linear-gradient(135deg, var(--gold-dim), transparent);
+}
+.dl-card.upcoming:hover {
+  border-color: rgba(255,209,102,0.4);
+  transform: none;
+  box-shadow: 0 0 20px rgba(255,209,102,0.1);
+  pointer-events: all;
+}
+.dl-icon {
+  width: 60px; height: 60px;
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.8rem;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  position: relative; z-index: 1;
+}
+.dl-card.upcoming .dl-icon {
+  background: rgba(255,209,102,0.08);
+  border-color: rgba(255,209,102,0.2);
+}
+.dl-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--grey);
+  position: relative; z-index: 1;
+}
+.dl-card.upcoming .dl-label { color: var(--gold); opacity: 0.8; }
+.dl-title {
+  font-family: var(--font-head);
+  font-size: 1.1rem;
+  font-weight: 700;
+  position: relative; z-index: 1;
+  text-align: center;
+  line-height: 1.3;
+}
+.dl-desc {
+  font-size: 0.8rem;
+  color: var(--grey);
+  line-height: 1.5;
+  text-align: center;
+  position: relative; z-index: 1;
+}
+.dl-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1.2rem;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  background: var(--cyan);
+  color: var(--bg-deep);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative; z-index: 1;
+  box-shadow: 0 0 15px var(--cyan-dim);
+}
+.dl-btn:hover { background: #33deff; box-shadow: 0 0 25px var(--cyan-glow); }
+.dl-btn.dl-btn-ghost {
+  background: transparent;
+  color: var(--grey);
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: none;
+  cursor: default;
+}
+.dl-btn.dl-btn-gold {
+  background: transparent;
+  color: var(--gold);
+  border: 1px solid rgba(255,209,102,0.3);
+  box-shadow: none;
+  cursor: default;
+}
+.upcoming-ribbon {
+  position: absolute;
+  top: 14px; right: -22px;
+  background: var(--gold);
+  color: var(--bg-deep);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 3px 28px;
+  transform: rotate(35deg);
+  text-transform: uppercase;
+  z-index: 2;
+}
+@media (max-width: 700px) {
+  .download-cards { flex-direction: column; align-items: center; }
+  .dl-card { width: 100%; max-width: 320px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="nav-logo">Civic<span>Track</span></div>
+  <ul class="nav-links">
+    <li><a href="#problem">Problem</a></li>
+    <li><a href="#about">Features</a></li>
+    <li><a href="#workflow">Workflow</a></li>
+    <li><a href="#roles">Roles</a></li>
+    <li><a href="#download">Download</a></li>
+    <li><a href="#sdg">SDG</a></li>
+  </ul>
+  <a href="#about" class="nav-cta">Get Started</a>
+  <div class="hamburger" id="hamburger">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <span class="close-menu" id="closeMenu">✕</span>
+  <a href="#problem" onclick="closeMobile()">Problem</a>
+  <a href="#about" onclick="closeMobile()">Features</a>
+  <a href="#workflow" onclick="closeMobile()">Workflow</a>
+  <a href="#roles" onclick="closeMobile()">Roles</a>
+  <a href="#download" onclick="closeMobile()">Download</a>
+  <a href="#sdg" onclick="closeMobile()">SDG</a>
+  <a href="#impact" onclick="closeMobile()">Impact</a>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-blobs">
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="blob blob3"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-badge">⬡ SDG Aligned &nbsp;✦&nbsp; Smart City Ready</div>
+    <h1 class="hero-title">CivicTrack —<br><span>Redefining Municipal</span> Governance</h1>
+    <p class="hero-sub">Real-time GPS tracking, accountability, and transparency for smarter cities. Built for the workforce of tomorrow's government.</p>
+    <div class="hero-buttons">
+      <a href="#about" class="btn-primary">Explore Features</a>
+      <a href="#workflow" class="btn-ghost">View Dashboard Demo</a>
+    </div>
+  </div>
+  <div class="scroll-down">
+    <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+  </div>
+</section>
+
+<!-- DOWNLOAD -->
+<section id="download">
+  <div class="container">
+    <div class="download-inner">
+      <p class="section-label">Get the App</p>
+      <h2 class="section-title">Download CivicTrack</h2>
+      <p class="section-sub">Access CivicTrack instantly via direct download, explore the source on GitHub, or wait for our Play Store launch.</p>
+      <div class="download-cards">
+
+        <!-- Instant Download -->
+        <div class="dl-card" onclick="window.open('https://github.com/karan942006/civictrackapp/releases/download/CivicTrack/app-debug.apk','_blank')">
+          <div class="dl-icon">⚡</div>
+          <div class="dl-label">Direct Download</div>
+          <div class="dl-title">Instant APK</div>
+          <div class="dl-desc">Download the latest CivicTrack APK directly to your Android device.</div>
+          <a href="https://github.com/karan942006/civictrackapp/releases/download/CivicTrack/app-debug.apk" target="_blank" class="dl-btn">⬇ Download APK</a>
+        </div>
+
+        <!-- GitHub -->
+        <div class="dl-card" onclick="window.open('#','_blank')">
+          <div class="dl-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="var(--cyan)" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/>
+            </svg>
+          </div>
+          <div class="dl-label">Open Source</div>
+          <div class="dl-title">View on GitHub</div>
+          <div class="dl-desc">Explore the codebase, contribute, or fork the repository on GitHub.</div>
+          <span class="dl-btn">⭐ Star on GitHub</span>
+        </div>
+
+        <!-- Play Store - Upcoming -->
+        <div class="dl-card upcoming">
+          <div class="upcoming-ribbon">Soon</div>
+          <div class="dl-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="var(--gold)" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3.18 23.76a2 2 0 0 0 2.08-.21l.1-.07 10.49-6.06-3.01-3.01L3.18 23.76zM.5 1.1A2 2 0 0 0 0 2.5v19a2 2 0 0 0 .5 1.4l.07.07 10.64-10.64v-.25L.57 1.03.5 1.1zM20.33 10.6l-2.99-1.73-3.33 3.33 3.33 3.33 3-1.73a2 2 0 0 0 0-3.2zM5.26.45l10.49 6.07-3.01 3.01L3.18.24A2 2 0 0 0 5.26.45z"/>
+            </svg>
+          </div>
+          <div class="dl-label">Coming Soon</div>
+          <div class="dl-title">Google Play Store</div>
+          <div class="dl-desc">Official Play Store listing is launching soon. Stay tuned for the release.</div>
+          <span class="dl-btn dl-btn-gold">🔔 Notify Me</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="container">
+    <p class="section-label">The Problem</p>
+    <h2 class="section-title">Municipal Systems Are Broken</h2>
+    <p class="section-sub">Legacy governance models suffer from deep inefficiencies that hinder service delivery and erode public trust.</p>
+    <div class="problem-grid">
+      <div class="problem-card" data-delay="0">
+        <div class="problem-icon">👻</div>
+        <h3>Proxy Attendance & Ghost Workers</h3>
+        <p>Fraudulent attendance marking and ghost employees drain municipal budgets without any service delivery, with no way to verify physical presence.</p>
+      </div>
+      <div class="problem-card" data-delay="150">
+        <div class="problem-icon">📡</div>
+        <h3>No Real-Time Field Monitoring</h3>
+        <p>Admins have zero visibility into where field workers are at any given moment, making it impossible to ensure tasks are being performed on time.</p>
+      </div>
+      <div class="problem-card" data-delay="300">
+        <div class="problem-icon">🔍</div>
+        <h3>Delayed & Unverifiable Service Delivery</h3>
+        <p>Task completion reports cannot be verified. Citizens suffer from delayed waste collection, broken roads, and unresolved drainage issues with no accountability trail.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-left">
+        <p class="section-label">What is CivicTrack</p>
+        <div class="big-quote">The operating system for <span>accountable</span> city governance.</div>
+        <p>CivicTrack transforms field operations into a fully digital, trackable, and auditable ecosystem. From garbage collection to road repairs — every task is verified, timestamped, and geotagged.</p>
+      </div>
+      <div class="about-right">
+        <ul class="feature-list" id="featureList">
+          <li><div class="feat-icon">📍</div> GPS Check-In / Check-Out</li>
+          <li><div class="feat-icon">📸</div> Geotagged Photo Evidence</li>
+          <li><div class="feat-icon">🔒</div> Geofencing Attendance</li>
+          <li><div class="feat-icon">📊</div> Real-Time Dashboard</li>
+          <li><div class="feat-icon">🤖</div> ML Anomaly Detection</li>
+          <li><div class="feat-icon">🏙️</div> Citizen Complaint Portal</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- METRICS -->
+<section id="metrics">
+  <div class="container">
+    <div class="metrics-grid">
+      <div class="metric-item">
+        <div class="metric-number" data-target="40" data-suffix="%">0%</div>
+        <div class="metric-label">Reduction in Absenteeism</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-number" data-target="3" data-suffix="x">0x</div>
+        <div class="metric-label">Faster Issue Resolution</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-number" data-target="100" data-suffix="%">0%</div>
+        <div class="metric-label">Digital Audit Trail</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-number" data-target="60" data-suffix="%">0%</div>
+        <div class="metric-label">Less Paper Usage</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WORKFLOW -->
+<section id="workflow">
+  <div class="container">
+    <p class="section-label">How It Works</p>
+    <h2 class="section-title">From Field to Dashboard</h2>
+    <p class="section-sub">A seamless 5-step digital workflow that ensures every task is tracked, verified, and accountable.</p>
+    <div class="workflow-steps">
+      <div class="step" data-delay="0">
+        <div class="step-num">📱</div>
+        <h4>Worker Opens App</h4>
+        <p>Field worker launches the CivicTrack mobile app to start their shift</p>
+      </div>
+      <div class="step" data-delay="100">
+        <div class="step-num">📍</div>
+        <h4>GPS Check-In</h4>
+        <p>Location verified via geofencing — attendance only marks within designated zone</p>
+      </div>
+      <div class="step" data-delay="200">
+        <div class="step-num">📋</div>
+        <h4>Task Assigned</h4>
+        <p>Admin pushes tasks digitally with priority, location, and time targets</p>
+      </div>
+      <div class="step" data-delay="300">
+        <div class="step-num">📸</div>
+        <h4>Photo Proof</h4>
+        <p>Worker submits geotagged, watermarked photo as irrefutable proof of completion</p>
+      </div>
+      <div class="step" data-delay="400">
+        <div class="step-num">✅</div>
+        <h4>Verified & Logged</h4>
+        <p>Admin reviews and data flows into the dashboard in real time</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROLES -->
+<section id="roles">
+  <div class="container">
+    <p class="section-label">User Roles</p>
+    <h2 class="section-title">Built for Every Stakeholder</h2>
+    <p class="section-sub">Four distinct interfaces designed around each user's specific needs and responsibilities.</p>
+
+    <div class="role-tabs">
+      <button class="role-tab active" onclick="switchRole('citizen')">🏠 Citizen</button>
+      <button class="role-tab" onclick="switchRole('worker')">👷 Worker</button>
+      <button class="role-tab" onclick="switchRole('admin')">⚙️ Admin</button>
+    </div>
+
+    <div class="role-panel active" id="role-citizen">
+      <div class="role-info">
+        <div class="role-icon-big">🏠</div>
+        <h3>Citizen</h3>
+        <p>Empowering residents to actively participate in improving municipal services through direct reporting and real-time tracking.</p>
+        <ul class="role-capabilities">
+          <li>Report civic issues with photo evidence</li>
+          <li>Track complaint status in real time</li>
+          <li>Receive push notifications on issue resolution</li>
+          <li>Rate service quality after resolution</li>
+        </ul>
+      </div>
+      <div class="role-mockup">
+        <div class="role-mockup-title">📱 Citizen App — Issue Feed</div>
+        <div class="mock-row"><span>Pothole on MG Road</span><span class="mock-badge badge-gold">In Progress</span></div>
+        <div class="mock-row"><span>Garbage not collected</span><span class="mock-badge badge-green">Resolved</span></div>
+        <div class="mock-row"><span>Broken streetlight</span><span class="mock-badge badge-cyan">Assigned</span></div>
+        <div class="mock-row"><span>Clogged drain — Sector 4</span><span class="mock-badge badge-gold">In Progress</span></div>
+        <div class="mock-row" style="margin-top:1rem; border:none; color: var(--cyan); font-size:0.8rem; font-weight:600;">+ Report New Issue</div>
+      </div>
+    </div>
+
+    <div class="role-panel" id="role-worker">
+      <div class="role-info">
+        <div class="role-icon-big">👷</div>
+        <h3>Field Worker</h3>
+        <p>A streamlined mobile experience that guides workers through their shift with GPS check-in, task management, and proof submission.</p>
+        <ul class="role-capabilities">
+          <li>GPS-based check-in within geofenced zones</li>
+          <li>View and navigate to assigned tasks</li>
+          <li>Submit geotagged photo proof of completion</li>
+          <li>Track personal attendance and work history</li>
+        </ul>
+      </div>
+      <div class="role-mockup">
+        <div class="role-mockup-title">📋 Worker App — Today's Tasks</div>
+        <div class="mock-row"><span>Sweep Zone A — Block 3</span><span class="mock-badge badge-green">Done</span></div>
+        <div class="mock-row"><span>Drain clearance — Rd 12</span><span class="mock-badge badge-cyan">Active</span></div>
+        <div class="mock-row"><span>Waste pickup — Market St.</span><span class="mock-badge badge-gold">Pending</span></div>
+        <div class="mock-row"><span>Check-in Status</span><span class="mock-badge badge-green">✓ Verified</span></div>
+        <div class="mock-row" style="margin-top:1rem; border:none; color: var(--grey); font-size:0.78rem;">Shift ends at 5:00 PM · 3 tasks remaining</div>
+      </div>
+    </div>
+
+    <div class="role-panel" id="role-admin">
+      <div class="role-info">
+        <div class="role-icon-big">⚙️</div>
+        <h3>Administrator</h3>
+        <p>Command-center level visibility with city-wide analytics, performance KPIs, resource allocation, and automated reporting.</p>
+        <ul class="role-capabilities">
+          <li>City-wide operational dashboard with KPIs</li>
+          <li>Workforce and vehicle resource analytics</li>
+          <li>Automated PDF report generation</li>
+          <li>ML-powered anomaly and fraud detection</li>
+        </ul>
+      </div>
+      <div class="role-mockup">
+        <div class="role-mockup-title">📊 Admin Dashboard — Overview</div>
+        <div class="mock-row"><span>Active Workers Today</span><span class="mock-badge badge-green">142 / 160</span></div>
+        <div class="mock-row"><span>Tasks Completed</span><span class="mock-badge badge-cyan">387 Today</span></div>
+        <div class="mock-row"><span>Open Complaints</span><span class="mock-badge badge-gold">23 Pending</span></div>
+        <div class="mock-row"><span>Anomalies Flagged</span><span style="color:#ff4d6d; font-weight:600; font-size:0.78rem;">2 Review</span></div>
+        <div class="mock-row" style="margin-top:1rem; border:none; color: var(--grey); font-size:0.78rem;">Last sync: 2 minutes ago · All systems nominal</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TECH STACK -->
+<section id="tech">
+  <div class="container">
+    <p class="section-label">Technology Stack</p>
+    <h2 class="section-title">Powered by Enterprise-Grade Tech</h2>
+    <p class="section-sub">Built on proven, scalable technologies designed for real-time performance and security.</p>
+    <div class="tech-grid">
+      <div class="tech-badge"><span>🤖</span> Android (Kotlin)</div>
+      <div class="tech-badge"><span>🔥</span> Firebase</div>
+      <div class="tech-badge"><span>☁️</span> Google Cloud Platform</div>
+      <div class="tech-badge"><span>🗺️</span> Google Maps API</div>
+      <div class="tech-badge"><span>📦</span> Cloud Firestore</div>
+      <div class="tech-badge"><span>🧠</span> ML Kit</div>
+      <div class="tech-badge"><span>🔐</span> TLS/SSL Encryption</div>
+      <div class="tech-badge"><span>📡</span> GPS Telemetry</div>
+      <div class="tech-badge"><span>🔑</span> Firebase Auth</div>
+      <div class="tech-badge"><span>📍</span> Geofencing API</div>
+    </div>
+  </div>
+</section>
+
+<!-- SDG -->
+<section id="sdg">
+  <div class="container">
+    <p class="section-label">Sustainability</p>
+    <h2 class="section-title">Aligned with the UN SDGs</h2>
+    <p class="section-sub">CivicTrack isn't just a governance tool — it's a commitment to a sustainable, equitable urban future.</p>
+    <div class="sdg-grid">
+      <div class="sdg-card">
+        <div class="sdg-num">SDG 6</div>
+        <h4>Clean Water & Sanitation</h4>
+        <p>Precise tracking of sanitation workers ensures clogged drains and waste issues are resolved on time, preventing disease and promoting public health.</p>
+      </div>
+      <div class="sdg-card">
+        <div class="sdg-num">SDG 11</div>
+        <h4>Sustainable Cities</h4>
+        <p>Continuous infrastructure monitoring ensures cities stay functional, clean, and resilient — improving quality of life for all residents.</p>
+      </div>
+      <div class="sdg-card">
+        <div class="sdg-num">SDG 12</div>
+        <h4>Responsible Consumption</h4>
+        <p>Full digitization eliminates paper-based records and manual registers, drastically reducing material consumption and administrative waste.</p>
+      </div>
+      <div class="sdg-card">
+        <div class="sdg-num">SDG 13</div>
+        <h4>Climate Action</h4>
+        <p>Proximity-based task assignment minimizes unnecessary vehicle travel, reducing fuel consumption and lowering the municipal carbon footprint.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOCIAL IMPACT -->
+<section id="impact">
+  <div class="container">
+    <div class="impact-quote">
+      <blockquote>"CivicTrack doesn't just track workers — it <span>builds trust</span> between citizens and government."</blockquote>
+    </div>
+    <div class="impact-cols">
+      <div class="impact-col">
+        <div class="impact-col-icon">🏙️</div>
+        <h4>Citizens</h4>
+        <p>Faster issue resolution, transparent complaint tracking, and restored faith in public service delivery systems.</p>
+      </div>
+      <div class="impact-col">
+        <div class="impact-col-icon">👷</div>
+        <h4>Workers</h4>
+        <p>Fair, verifiable attendance records protect workers from wage disputes and provide digital proof of their contributions.</p>
+      </div>
+      <div class="impact-col">
+        <div class="impact-col-icon">🌆</div>
+        <h4>Cities</h4>
+        <p>Cleaner streets, better infrastructure, reduced operational costs, and data-driven governance at scale.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-main">
+    <div class="footer-brand">
+      <div class="logo">Civic<span>Track</span></div>
+      <p>A GPS-powered municipal governance platform for transparent, accountable, and smart city operations.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Product</h5>
+      <ul>
+        <li><a href="#about">Features</a></li>
+        <li><a href="#workflow">How It Works</a></li>
+        <li><a href="#roles">User Roles</a></li>
+        <li><a href="#tech">Technology</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Impact</h5>
+      <ul>
+        <li><a href="#sdg">SDG Alignment</a></li>
+        <li><a href="#impact">Social Impact</a></li>
+        <li><a href="#metrics">Metrics</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Contact</h5>
+      <ul>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Partnership</a></li>
+        <li><a href="#">Support</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-tagline"><b>Made By</b></p><br>
+    <p class="footer-tagline"><b>Shaila Mandkulkar · Ishwari Shinde · Bhoomi Puri · Siddhi Salvi · Ketan Nimbare · Parikshit Kumbhar · Parth Kelaskar · Tapan Narvekar · Karan Lingayat</b></p>
+  </div>
+</footer>
+
+<script>
+// NAVBAR SCROLL
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// MOBILE MENU
+document.getElementById('hamburger').addEventListener('click', () => {
+  document.getElementById('mobileMenu').classList.add('open');
+});
+document.getElementById('closeMenu').addEventListener('click', closeMobile);
+function closeMobile() {
+  document.getElementById('mobileMenu').classList.remove('open');
+}
+
+// INTERSECTION OBSERVER - CARDS & ELEMENTS
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const el = entry.target;
+      const delay = el.dataset.delay || 0;
+      setTimeout(() => el.classList.add('visible'), parseInt(delay));
+    }
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.problem-card, .sdg-card').forEach(el => observer.observe(el));
+
+// FEATURE LIST STAGGER
+const featObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const items = entry.target.querySelectorAll('li');
+      items.forEach((item, i) => {
+        setTimeout(() => item.classList.add('visible'), i * 100);
+      });
+    }
+  });
+}, { threshold: 0.2 });
+const featList = document.getElementById('featureList');
+if (featList) featObserver.observe(featList);
+
+// WORKFLOW STEPS STAGGER
+const workObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.querySelectorAll('.step').forEach(step => {
+        const delay = step.dataset.delay || 0;
+        setTimeout(() => step.classList.add('visible'), parseInt(delay));
+      });
+    }
+  });
+}, { threshold: 0.1 });
+const workSection = document.querySelector('.workflow-steps');
+if (workSection) workObserver.observe(workSection);
+
+// ANIMATED COUNTERS
+function animateCounter(el) {
+  const target = parseInt(el.dataset.target);
+  const suffix = el.dataset.suffix || '';
+  const duration = 2000;
+  const step = target / (duration / 16);
+  let current = 0;
+  const timer = setInterval(() => {
+    current = Math.min(current + step, target);
+    el.textContent = Math.floor(current) + suffix;
+    if (current >= target) clearInterval(timer);
+  }, 16);
+}
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.querySelectorAll('.metric-number').forEach(animateCounter);
+      counterObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.3 });
+const metricsSection = document.getElementById('metrics');
+if (metricsSection) counterObserver.observe(metricsSection);
+
+// ROLE TABS
+function switchRole(role) {
+  document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.role-panel').forEach(p => p.classList.remove('active'));
+  document.querySelector(`[onclick="switchRole('${role}')"]`).classList.add('active');
+  document.getElementById('role-' + role).classList.add('active');
+}
+</script>
+</body>
+</html>
